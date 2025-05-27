@@ -1,16 +1,21 @@
 package ProyectoCajeroATM;
 
 public abstract class Transaccion implements ITransaccion{
-    private int identificador;
-    private String fecha;
-    private char tipo;
-    private double monto;
+    
+    protected int identificador;
+    protected String fecha;
+    protected char tipo;
+    protected double monto;
+    protected Cuenta cuentaOrigen;
+    protected Cuenta cuentaDestino;  
 
-    public Transaccion(int identificador, String fecha, char tipo, double monto) {
+    public Transaccion(int identificador, String fecha, char tipo, double monto, Cuenta cuentaOrigen, Cuenta cuentaDestino) {
         this.identificador = identificador;
         this.fecha = fecha;
         this.tipo = tipo;
         this.monto = monto;
+        this.cuentaOrigen = cuentaOrigen;
+        this.cuentaDestino = cuentaDestino;
     }
 
     public int getIdentificador() {

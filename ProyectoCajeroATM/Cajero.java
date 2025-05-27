@@ -5,90 +5,62 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class Cajero {
-    
+
     ArrayList<Transaccion> listaTransacciones = new ArrayList<>();
     private String localizacion;
     private String banco;
     private static int id = 0;
 
-    public Cajero(String localizacion, String banco){
+    public Cajero(String localizacion, String banco) {
         this.localizacion = localizacion;
         this.banco = banco;
     }
-
-    public void retirar(Cuenta cuenta, double monto){
-        if(cuenta.getSaldo() < monto){
-            System.out.println("Fondos insuficientes para el retiro");
-            return;
-        }
-        double saldoNuevo = cuenta.getSaldo() - monto;
-        cuenta.setSaldo(saldoNuevo);
-
+    
+    public void realizarRetiro(Cuenta cuenta, double monto) {
         id++;
-
-        // Obtener la fecha y hora actual
-        LocalDateTime ahora = LocalDateTime.now();
-
-        // Formatear la fecha y hora como String
-        DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        String fechaHoraFormateada = ahora.format(formato);
-        
-        Transaccion retiro = new Retiro(id, fechaHoraFormateada, 'R', monto);
+        String fecha = obtenerFechaActual();
+        Retiro retiro = new Retiro(id, fecha, 'R', monto, cuenta);
+        retiro.realizarOperacion();
         listaTransacciones.add(retiro);
+        imprimirTicket(cuenta.getCliente().getNombre(), 'R', monto);
     }
 
-    public void transferir(Cuenta cuenta_origen, Cuenta cuenta_destino, double monto){
-        // Se debe hacer un objeto de tipo transaccion al finalizar
-        if(cuenta_origen.getSaldo() < monto){
-            System.out.println("Fondos insuficientes para la transaccion");
-            return;
-        }
-        // Nuevo saldo cuenta origen
-        double saldoNuevoOri = cuenta_origen.getSaldo() - monto;
-        cuenta_origen.setSaldo(saldoNuevoOri);
-        // Nuevo saldo cuenta destino
-        double saldoNuevoDes = cuenta_destino.getSaldo() + monto;
-        cuenta_origen.setSaldo(saldoNuevoDes);
-
+    public void realizarTransferencia(Cuenta cuentaOrigen, Cuenta cuentaDestino, double monto) {
         id++;
-
-        // Obtener la fecha y hora actual
-        LocalDateTime ahora = LocalDateTime.now();
-
-        // Formatear la fecha y hora como String
-        DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        String fechaHoraFormateada = ahora.format(formato);
-
-        Transaccion transferencia = new Transferencia(id, fechaHoraFormateada, 'T', monto);
+        String fecha = obtenerFechaActual();
+        Transferencia transferencia = new Transferencia(id, fecha, 'T', monto, cuentaOrigen, cuentaDestino);
+        transferencia.realizarOperacion();
         listaTransacciones.add(transferencia);
-        imprimirTicket(cuenta_origen.getCliente().getNombre(), 'T', monto);
+        imprimirTicket(cuentaOrigen.getCliente().getNombre(), 'T', monto);
     }
 
-    public void imprimirTicket(String cliente, int tipo_transaccion, double monto){
-        System.out.println("================="+this.banco+"===============");
-        System.out.println("Nombre del cliente: "+cliente);
-        
-        String tipoTransaccion = "Retiro";
-        if(tipo_transaccion=='T') tipoTransaccion = "Transferencia";
-        System.out.println("Tipo de transaccion: "+tipoTransaccion);
-
-        System.out.println("Monto total: "+monto);
-        System.out.println("================="+this.banco+"===============");
+    private String obtenerFechaActual() {
+        LocalDateTime ahora = LocalDateTime.now();
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return ahora.format(formato);
+    }
+    public void imprimirTicket(String cliente, char tipoTransaccion, double monto) {
+        System.out.println("======= " + banco + " =======");
+        System.out.println("Cliente: " + cliente);
+        System.out.println("Tipo: " + (tipoTransaccion == 'R' ? "Retiro" : "Transferencia"));
+        System.out.println("Monto: " + monto);
+        System.out.println("=========================");
     }
 
-    public String getLocalizacion(){
+    // Getters y setters
+    public String getLocalizacion() {
         return this.localizacion;
     }
 
-    public void setLocalizacion(String localizacion){
+    public void setLocalizacion(String localizacion) {
         this.localizacion = localizacion;
     }
 
-    public String getBanco(){
+    public String getBanco() {
         return this.banco;
     }
 
-    public void setBanco(String banco){
+    public void setBanco(String banco) {
         this.banco = banco;
     }
 }

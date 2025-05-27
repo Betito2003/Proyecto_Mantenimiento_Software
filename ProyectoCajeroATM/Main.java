@@ -13,14 +13,12 @@ public class Main {
         ArrayList<Cliente> clientes = new ArrayList<>();
         ArrayList<Tarjeta> tarjetas = new ArrayList<>();
         ArrayList<Cuenta> cuentas = new ArrayList<>();
-        ArrayList<Transaccion> transacciones = new ArrayList<>();
 
         // *** ALTA DE CLIENTES y TARJETAS - Esto sería para poblar la data antes de usar el cajero ***
-        // Para simplificar, agregamos manualmente un cliente, cuenta y tarjeta para poder usar el cajero
         Cliente clienteEjemplo = new Cliente(1, "Roberto", "Calle Falsa 123");
         clientes.add(clienteEjemplo);
-        Cuenta cuentaAhorro = new CuentaAhorro(1,clienteEjemplo,1,1);
-        Cuenta cuentaCheques = new CuentaCheque(1, clienteEjemplo, 1,1);
+        Cuenta cuentaAhorro = new CuentaAhorro(1, clienteEjemplo, 'A', 1000); // saldo inicial ejemplo
+        Cuenta cuentaCheques = new CuentaCheque(2, clienteEjemplo, 'C', 2000);
         cuentas.add(cuentaAhorro);
         cuentas.add(cuentaCheques);
         Tarjeta tarjeta = new Tarjeta(12344321, cuentaAhorro);
@@ -96,17 +94,7 @@ public class Main {
 
             if (opcionTransaccion == 1) {
                 // Retiro
-                //Transaccion retiro = cajero.retirar(cuentaSeleccionada, monto);
-
-                
-                // Retiro retiro;
-                // retiro.realizar_Operacion();
-                // if (retiro != null) {
-                //     transacciones.add(retiro);
-                //     //cajero.imprimirTicket(retiro)
-                // } else {
-                //     System.out.println("No se pudo realizar el retiro (fondos insuficientes?).");
-                // }
+                cajero.realizarRetiro(cuentaSeleccionada, monto);
 
             } else {
                 // Transferencia
@@ -116,24 +104,18 @@ public class Main {
                 // Buscar cuenta destino
                 Cuenta cuentaDestino = null;
                 for (Cuenta c : cuentas) {
-                    //if (c.getNumeroCuenta().equals(numCuentaDestino)) {
-                      //  cuentaDestino = c;
-                       // break;
-                    //}
+                    // Asumo que el número de cuenta es int y se guarda como int, si es String ajustar
+                    if (String.valueOf(c.getNumero_de_cuenta()).equals(numCuentaDestino)) {
+                        cuentaDestino = c;
+                        break;
+                    }
                 }
 
-                // if (cuentaDestino == null) {
-                //     System.out.println("Cuenta destino no encontrada.");
-                //     continue;
-                // }
-
-                // Transaccion transferencia = cajero.transferir(cuentaSeleccionada, cuentaDestino, monto);
-                // if (transferencia != null) {
-                //     transacciones.add(transferencia);
-                //     cajero.imprimirTicket(transferencia);
-                // } else {
-                //     System.out.println("No se pudo realizar la transferencia (fondos insuficientes?).");
-                // }
+                if (cuentaDestino == null) {
+                    System.out.println("Cuenta destino no encontrada.");
+                } else {
+                    cajero.realizarTransferencia(cuentaSeleccionada, cuentaDestino, monto);
+                }
             }
 
             System.out.print("\n¿Desea realizar otra operación? (s/n): ");
