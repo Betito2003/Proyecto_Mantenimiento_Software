@@ -2,11 +2,11 @@ package ProyectoCajeroATM;
 
 public class Tarjeta {
     private int numero;
-    private Cliente cliente;
+    private Cuenta cuenta;
 
-    public Tarjeta(int numero, Cliente cliente) {
+    public Tarjeta(int numero, Cuenta cuenta) {
         this.numero = numero;
-        this.cliente = cliente;
+        this.cuenta = cuenta;
     }
 
     public int getNumero() {
@@ -17,11 +17,11 @@ public class Tarjeta {
         this.numero = numero;
     }
 
-    public Cliente getCliente() {
-        return cliente;
+    public Cuenta getCuenta() {
+        return cuenta;
     }
 
-    public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
+    public void setCuenta(Cuenta cuenta) {
+        this.cuenta = cuenta;
     }
 }

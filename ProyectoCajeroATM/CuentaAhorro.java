@@ -3,8 +3,8 @@ package ProyectoCajeroATM;
 public class CuentaAhorro extends Cuenta {
     private double tasaInteres;
 
-    public CuentaAhorro(int numero_de_cuenta, Cliente cliente, double tasaInteres) {
-        super(numero_de_cuenta, cliente, tasaInteres);
+    public CuentaAhorro(int numero_de_cuenta, Cliente cliente, double saldo ,double tasaInteres) {
+        super(numero_de_cuenta, cliente, saldo);
         this.tasaInteres = tasaInteres;
         this.tipo = 'A';
     }
