@@ -137,6 +137,16 @@ public class Main {
 
                 case "6":
                     continuar = false;
+                    ArrayList<Transaccion> lista = cajero.getListaTransacciones();
+                    for (Transaccion t : lista) {
+                        System.out.println("Identificador: " + t.getIdentificador()
+                            + " | Fecha: " + t.getFecha() 
+                            + " | Tipo: " + t.getTipo()
+                            + " | Cuenta: " + t.getCuentaOrigen().getNumero_de_cuenta()
+                            + " | Cuenta Destino: " + (t.getCuentaDestino() != null ? t.getCuentaDestino().getNumero_de_cuenta() : "N/A")
+                            + " | Monto: " + t.getMonto());
+                    }
+
                     System.out.println("Gracias por usar el cajero automático. ¡Hasta luego!");
                     break;
 

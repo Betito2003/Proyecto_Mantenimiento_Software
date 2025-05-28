@@ -1,13 +1,13 @@
 package ProyectoCajeroATM;
 
-public abstract class Transaccion implements ITransaccion{
-    
-    protected int identificador;
-    protected String fecha;
-    protected char tipo;
-    protected double monto;
-    protected Cuenta cuentaOrigen;
-    protected Cuenta cuentaDestino;  
+public abstract class Transaccion implements ITransaccion {
+
+    private int identificador;
+    private String fecha;
+    private char tipo;
+    private double monto;
+    private Cuenta cuentaOrigen;
+    private Cuenta cuentaDestino;
 
     public Transaccion(int identificador, String fecha, char tipo, double monto, Cuenta cuentaOrigen, Cuenta cuentaDestino) {
         this.identificador = identificador;
@@ -50,13 +50,31 @@ public abstract class Transaccion implements ITransaccion{
         this.monto = monto;
     }
 
+    public Cuenta getCuentaOrigen() {
+        return cuentaOrigen;
+    }
+
+    public void setCuentaOrigen(Cuenta cuentaOrigen) {
+        this.cuentaOrigen = cuentaOrigen;
+    }
+
+    public Cuenta getCuentaDestino() {
+        return cuentaDestino;
+    }
+
+    public void setCuentaDestino(Cuenta cuentaDestino) {
+        this.cuentaDestino = cuentaDestino;
+    }
+
     @Override
     public String toString() {
         return "Transaccion{" +
-                "identificador='" + identificador + '\'' +
+                "identificador=" + identificador +
                 ", fecha='" + fecha + '\'' +
-                ", tipo='" + tipo + '\'' +
+                ", tipo=" + tipo +
                 ", monto=" + monto +
+                ", cuentaOrigen=" + (cuentaOrigen != null ? cuentaOrigen.getNumero_de_cuenta() : "null") +
+                ", cuentaDestino=" + (cuentaDestino != null ? cuentaDestino.getNumero_de_cuenta() : "null") +
                 '}';
     }
 }

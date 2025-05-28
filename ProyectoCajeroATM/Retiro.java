@@ -8,9 +8,9 @@ public class Retiro extends Transaccion {
 
     @Override
     public boolean realizarOperacion() {
-        if (cuentaOrigen.getSaldo() >= monto) {
-            cuentaOrigen.setSaldo(cuentaOrigen.getSaldo() - monto);
-            System.out.println("Retiro exitoso de " + monto + " de la cuenta " + cuentaOrigen.getNumero_de_cuenta());
+        if (getCuentaOrigen().getSaldo() >= getMonto()) {
+            getCuentaOrigen().setSaldo(getCuentaOrigen().getSaldo() - getMonto());
+            System.out.println("Retiro exitoso de " + getMonto() + " de la cuenta " + getCuentaOrigen().getNumero_de_cuenta());
             return true;
         } else {
             System.out.println("Fondos insuficientes para retiro.");

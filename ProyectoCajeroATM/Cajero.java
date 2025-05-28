@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class Cajero {
 
-    ArrayList<Transaccion> listaTransacciones = new ArrayList<>();
+    private ArrayList<Transaccion> listaTransacciones = new ArrayList<>();
     private String localizacion;
     private String banco;
     private static int id = 0;
@@ -65,4 +65,9 @@ public class Cajero {
     public void setBanco(String banco) {
         this.banco = banco;
     }
+
+    public ArrayList<Transaccion> getListaTransacciones() {
+      return listaTransacciones;
+    }
+
 }
