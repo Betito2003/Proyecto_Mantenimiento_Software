@@ -1,131 +1,211 @@
 package ProyectoCajeroATM;
+
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-
-        // Datos del cajero (fijo)
         Cajero cajero = new Cajero("Av. Principal 123", "Banco Ejemplo");
 
-        // Listas para almacenar datos
         ArrayList<Cliente> clientes = new ArrayList<>();
-        ArrayList<Tarjeta> tarjetas = new ArrayList<>();
         ArrayList<Cuenta> cuentas = new ArrayList<>();
-
-        // *** ALTA DE CLIENTES y TARJETAS - Esto sería para poblar la data antes de usar el cajero ***
-        Cliente clienteEjemplo = new Cliente(1, "Roberto", "Calle Falsa 123");
-        clientes.add(clienteEjemplo);
-        Cuenta cuentaAhorro = new CuentaAhorro(1, clienteEjemplo, 'A', 1000); // saldo inicial ejemplo
-        Cuenta cuentaCheques = new CuentaCheque(2, clienteEjemplo, 'C', 2000);
-        cuentas.add(cuentaAhorro);
-        cuentas.add(cuentaCheques);
-        Tarjeta tarjeta = new Tarjeta(12344321, cuentaAhorro);
-        tarjetas.add(tarjeta);
+        ArrayList<Tarjeta> tarjetas = new ArrayList<>();
 
         System.out.println("=== Bienvenido al Cajero Automático ===");
 
-        while (true) {
-            System.out.print("\nPor favor, ingrese el ID de su tarjeta: ");
-            String idTarjeta = scanner.nextLine();
+        boolean continuar = true;
+        while (continuar) {
+            System.out.println("\nMenú Principal:");
+            System.out.println("1. Alta de Cliente");
+            System.out.println("2. Consultar Clientes");
+            System.out.println("3. Realizar Operación");
+            System.out.println("4. Consultar Cuentas");
+            System.out.println("5. Depositar dinero a una cuenta");
+            System.out.println("6. Salir");
+            System.out.print("Seleccione una opción: ");
 
-            // Buscar la tarjeta en la lista
-            Tarjeta tarjetaUsuario = null;
-            for (Tarjeta t : tarjetas) {
-                if (t.getNumero() == Integer.parseInt(idTarjeta)) {
-                    tarjetaUsuario = t;
+            String opcion = scanner.nextLine();
+
+            switch (opcion) {
+                case "1":
+                    // Alta de Cliente
+                    System.out.print("Ingrese nombre del cliente: ");
+                    String nombre = scanner.nextLine();
+                    System.out.print("Ingrese dirección: ");
+                    String direccion = scanner.nextLine();
+
+                    int idCliente = clientes.size() + 1;
+                    Cliente nuevoCliente = new Cliente(idCliente, nombre, direccion);
+                    clientes.add(nuevoCliente);
+
+                    Cuenta cuentaAhorro = new CuentaAhorro(cuentas.size() + 1, nuevoCliente, 1000, 1000);
+                    Cuenta cuentaCheque = new CuentaCheque(cuentas.size() + 2, nuevoCliente, 2000, 2000);
+                    cuentas.add(cuentaAhorro);
+                    cuentas.add(cuentaCheque);
+
+                    Tarjeta nuevaTarjetaCheque = new Tarjeta(1234000 + idCliente, cuentaCheque);
+                    Tarjeta nuevaTarjetaAhorro = new Tarjeta(4321000 + idCliente, cuentaAhorro);
+                    tarjetas.add(nuevaTarjetaCheque);
+                    tarjetas.add(nuevaTarjetaAhorro);
+
+                    System.out.println("\nCliente creado exitosamente:");
+                    System.out.println("ID Cliente: " + nuevoCliente.getIdentificador());
+                    System.out.println("Nombre: " + nuevoCliente.getNombre());
+                    System.out.println("Cuenta Ahorro: " + cuentaAhorro.getNumero_de_cuenta());
+                    System.out.println("Cuenta Cheque: " + cuentaCheque.getNumero_de_cuenta());
+                    System.out.println("Tarjeta de cheque: " + nuevaTarjetaCheque.getNumero());
+                    System.out.println("Tarjeta de ahorro: " + nuevaTarjetaAhorro.getNumero());
                     break;
-                }
-            }
 
-            if (tarjetaUsuario == null) {
-                System.out.println("Tarjeta no encontrada o no válida. Intente de nuevo.");
-                continue;
-            }
-
-            Cliente cliente = tarjetaUsuario.getCuenta().getCliente();
-            System.out.println("Bienvenido, " + cliente.getNombre());
-
-            // Selección tipo cuenta
-            char tipoCuenta;
-            Cuenta cuentaSeleccionada = null;
-            do {
-                System.out.print("Seleccione tipo de cuenta (A = Ahorro, C = Cheques): ");
-                String input = scanner.nextLine().toUpperCase();
-                if (input.length() == 1 && (input.charAt(0) == 'A' || input.charAt(0) == 'C')) {
-                    tipoCuenta = input.charAt(0);
-                    // Buscar cuenta del cliente con ese tipo
-                    for (Cuenta c : cuentas) {
-                        if (c.getCliente().getIdentificador() == cliente.getIdentificador() && c.getTipo() == tipoCuenta) {
-                            cuentaSeleccionada = c;
-                            break;
+                case "2":
+                    if (clientes.isEmpty()) {
+                        System.out.println("\nNo hay clientes registrados aún.");
+                    } else {
+                        System.out.println("\n=== Lista de Clientes Registrados ===");
+                        for (Cliente c : clientes) {
+                            System.out.println("ID: " + c.getIdentificador() +
+                                    " | Nombre: " + c.getNombre() +
+                                    " | Dirección: " + c.getDireccion());
                         }
                     }
-                    if (cuentaSeleccionada == null) {
-                        System.out.println("No tiene cuenta de ese tipo.");
-                        continue;
+                    break;
+
+                case "3":
+                    if (clientes.isEmpty()) {
+                        System.out.println("\nNo hay clientes registrados aún.");
+                    } else {
+                        realizarOperacion(scanner, clientes, cuentas, tarjetas, cajero);
                     }
                     break;
-                } else {
-                    System.out.println("Entrada inválida. Ingrese A o C.");
-                }
-            } while (true);
 
-            // Selección transacción
-            System.out.println("Seleccione tipo de transacción:");
-            System.out.println("1. Retiro");
-            System.out.println("2. Transferencia");
-            int opcionTransaccion = 0;
-            do {
-                System.out.print("Opción: ");
-                try {
-                    opcionTransaccion = Integer.parseInt(scanner.nextLine());
-                } catch (NumberFormatException e) {
-                    opcionTransaccion = 0;
-                }
-                if (opcionTransaccion != 1 && opcionTransaccion != 2) {
-                    System.out.println("Opción inválida, intente de nuevo.");
-                }
-            } while (opcionTransaccion != 1 && opcionTransaccion != 2);
+                case "4":
+                    if (cuentas.isEmpty()) {
+                        System.out.println("\nNo hay cuentas registradas aún.");
+                    } else {
+                        System.out.println("\n=== Lista de Cuentas Registradas ===");
+                        for (Cuenta c : cuentas) {
+                            // Buscar tarjeta asociada a esta cuenta
+                            String numeroTarjeta = "No tiene tarjeta asociada";
+                            for (Tarjeta t : tarjetas) {
+                                if (t.getCuenta().getNumero_de_cuenta() == c.getNumero_de_cuenta()) {
+                                    numeroTarjeta = String.valueOf(t.getNumero());
+                                    break;
+                                }
+                            }
 
-            System.out.print("Ingrese monto: ");
-            double monto = Double.parseDouble(scanner.nextLine());
-
-            if (opcionTransaccion == 1) {
-                // Retiro
-                cajero.realizarRetiro(cuentaSeleccionada, monto);
-
-            } else {
-                // Transferencia
-                System.out.print("Ingrese número de cuenta destino: ");
-                String numCuentaDestino = scanner.nextLine();
-
-                // Buscar cuenta destino
-                Cuenta cuentaDestino = null;
-                for (Cuenta c : cuentas) {
-                    // Asumo que el número de cuenta es int y se guarda como int, si es String ajustar
-                    if (String.valueOf(c.getNumero_de_cuenta()).equals(numCuentaDestino)) {
-                        cuentaDestino = c;
-                        break;
+                            System.out.println("Número: " + c.getNumero_de_cuenta() +
+                                " | Tipo: " + (c.getTipo() == 'A' ? "Ahorro" : "Cheques") +
+                                " | Cliente: " + c.getCliente().getNombre() +
+                                " | Saldo: " + String.format("%.2f", c.getSaldo()) +
+                                " | Tarjeta: " + numeroTarjeta);
+                        }
                     }
-                }
+                    break;
 
-                if (cuentaDestino == null) {
-                    System.out.println("Cuenta destino no encontrada.");
-                } else {
-                    cajero.realizarTransferencia(cuentaSeleccionada, cuentaDestino, monto);
-                }
-            }
+                    case "5":
+                        if (tarjetas.isEmpty()) {
+                            System.out.println("\nNo hay tarjetas registradas aún.");
+                        } else {
+                            System.out.print("\nIngrese el número de tarjeta: ");
+                            String numeroTarjetaDeposito = scanner.nextLine();
 
-            System.out.print("\n¿Desea realizar otra operación? (s/n): ");
-            String otraOp = scanner.nextLine();
-            if (!otraOp.equalsIgnoreCase("s")) {
-                System.out.println("Gracias por usar el cajero automático. ¡Hasta luego!");
-                break;
+                            Tarjeta tarjetaDeposito = null;
+                            for (Tarjeta t : tarjetas) {
+                                if (String.valueOf(t.getNumero()).equals(numeroTarjetaDeposito)) {
+                                    tarjetaDeposito = t;
+                                    break;
+                                }
+                            }
+
+                            if (tarjetaDeposito == null) {
+                                System.out.println("Tarjeta no encontrada o no válida.");
+                            } else {
+                                System.out.print("Ingrese el monto a depositar: ");
+                                double montoDeposito = Double.parseDouble(scanner.nextLine());
+
+                                // Sumar el saldo directamente
+                                Cuenta cuentaDeposito = tarjetaDeposito.getCuenta();
+                                cuentaDeposito.setSaldo(cuentaDeposito.getSaldo() + montoDeposito);
+
+                                System.out.println("Depósito realizado exitosamente. Nuevo saldo: " +
+                                        String.format("%.2f", cuentaDeposito.getSaldo()));
+                            }
+                        }
+                        break;
+
+
+                case "6":
+                    continuar = false;
+                    System.out.println("Gracias por usar el cajero automático. ¡Hasta luego!");
+                    break;
+
+                default:
+                    System.out.println("Opción no válida. Intente de nuevo.");
             }
         }
 
         scanner.close();
+    }
+
+    private static void realizarOperacion(Scanner scanner, ArrayList<Cliente> clientes, ArrayList<Cuenta> cuentas,
+                                           ArrayList<Tarjeta> tarjetas, Cajero cajero) {
+        System.out.print("\nIngrese el número de su tarjeta: ");
+        String idTarjeta = scanner.nextLine();
+
+        Tarjeta tarjetaUsuario = null;
+        for (Tarjeta t : tarjetas) {
+            if (String.valueOf(t.getNumero()).equals(idTarjeta)) {
+                tarjetaUsuario = t;
+                break;
+            }
+        }
+
+        if (tarjetaUsuario == null) {
+            System.out.println("Tarjeta no encontrada o no válida.");
+            return;
+        }
+
+        Cliente cliente = tarjetaUsuario.getCuenta().getCliente();
+        System.out.println("Bienvenido, " + cliente.getNombre());
+
+        // Se toma la cuenta directamente de la tarjeta
+        Cuenta cuentaSeleccionada = tarjetaUsuario.getCuenta();
+
+        System.out.println("\nSeleccione la operación:");
+        System.out.println("1. Retiro");
+        System.out.println("2. Transferencia");
+        System.out.print("Opción: ");
+        String opcion = scanner.nextLine();
+
+        System.out.print("Ingrese monto: ");
+        double monto = Double.parseDouble(scanner.nextLine());
+
+        switch (opcion) {
+            case "1":
+                cajero.realizarRetiro(cuentaSeleccionada, monto);
+                break;
+            case "2":
+                System.out.print("Ingrese número de tarjeta destino: ");
+                String numTarjetaDestino = scanner.nextLine();
+
+                Tarjeta tarjetaDestino = null;
+                for (Tarjeta t : tarjetas) {
+                    if (String.valueOf(t.getNumero()).equals(numTarjetaDestino)) {
+                        tarjetaDestino = t;
+                        break;
+                    }
+                }
+
+                if (tarjetaDestino == null) {
+                    System.out.println("Tarjeta destino no encontrada.");
+                } else {
+                    Cuenta cuentaDestino = tarjetaDestino.getCuenta();
+                    cajero.realizarTransferencia(cuentaSeleccionada, cuentaDestino, monto);
+                }
+                break;
+            default:
+                System.out.println("Opción no válida.");
+        }
     }
 }

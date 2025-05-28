@@ -7,13 +7,15 @@ public class Transferencia extends Transaccion {
     }
 
     @Override
-    public void realizarOperacion() {
+    public boolean realizarOperacion() {
         if (cuentaOrigen.getSaldo() >= monto) {
             cuentaOrigen.setSaldo(cuentaOrigen.getSaldo() - monto);
             cuentaDestino.setSaldo(cuentaDestino.getSaldo() + monto);
             System.out.println("Transferencia exitosa de " + monto + " de la cuenta " + cuentaOrigen.getNumero_de_cuenta() + " a la cuenta " + cuentaDestino.getNumero_de_cuenta());
+            return true;
         } else {
             System.out.println("Fondos insuficientes para transferencia.");
+            return false;
         }
     }
 }

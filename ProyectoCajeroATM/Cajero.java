@@ -20,18 +20,20 @@ public class Cajero {
         id++;
         String fecha = obtenerFechaActual();
         Retiro retiro = new Retiro(id, fecha, 'R', monto, cuenta);
-        retiro.realizarOperacion();
-        listaTransacciones.add(retiro);
-        imprimirTicket(cuenta.getCliente().getNombre(), 'R', monto);
+        if(retiro.realizarOperacion()){
+            listaTransacciones.add(retiro);
+            imprimirTicket(cuenta.getCliente().getNombre(), 'R', monto);
+        }
     }
 
     public void realizarTransferencia(Cuenta cuentaOrigen, Cuenta cuentaDestino, double monto) {
         id++;
         String fecha = obtenerFechaActual();
         Transferencia transferencia = new Transferencia(id, fecha, 'T', monto, cuentaOrigen, cuentaDestino);
-        transferencia.realizarOperacion();
-        listaTransacciones.add(transferencia);
-        imprimirTicket(cuentaOrigen.getCliente().getNombre(), 'T', monto);
+        if(transferencia.realizarOperacion()){
+            imprimirTicket(cuentaOrigen.getCliente().getNombre(), 'T', monto);
+            listaTransacciones.add(transferencia);
+        }
     }
 
     private String obtenerFechaActual() {
